@@ -5,6 +5,7 @@
     const resultDivided = document.getElementById('result-area');
     const tweetDivided = document.getElementById('tweet-area');
     const headerDivided = document.getElementById('rotateH');  //onclickで要素を回転
+
     /**
      * 指定したHTML要素の子どもを全て削除する
      * @param {HTMLElement} element HTML HTMLの要素
@@ -15,13 +16,6 @@
         }
     }
 
-// Enterキーを押すと、ボタンの処理を呼び出す
-    userNameInput.onkeydown = (event) => {
-        if (event.key === 'Enter') {
-            // ボタンのonclick()処理を呼び出す
-            assessmentButton.onclick();
-        }
-    };
 
     // 診断ボタンonclickで動く f関数
     assessmentButton.onclick = () => {
@@ -29,9 +23,13 @@
         if (userName.length === 0) {  // 名前が空のときは 処理を終了する
             return;
         }
+
+
         // firstChildのelementを削除
         removeAllChildren(resultDivided);
         removeAllChildren(tweetDivided);
+
+
         // 診断エリアの作成   ==> header,result のdiv要素
         const header = document.createElement('h3');
         header.innerText = '診断結果';
@@ -40,19 +38,26 @@
         const result = assessment(userName);
         paragraph.innerText = result;
         resultDivided.appendChild(paragraph);
+
+
         //  ツイートエリアの作成　id="tweet-area"
         const anchor = document.createElement('a');
         const hrefValue = 'https://twitter.com/intent/tweet?button_hashtag='
             + encodeURIComponent('あなたのいいところ')
             + '&ref_src=twsrc%5Etfw';
-
         anchor.setAttribute('href', hrefValue);
         anchor.className = 'twitter-hashtag-button';
         anchor.setAttribute('data-text', result);
         anchor.innerText = 'Tweet #あなたのいいところ';
-
         tweetDivided.appendChild(anchor);
-        twttr.widgets.load();
+
+
+        // htmlファイルの<script>タグも、こちらに移植[リバースエンジニアリング？]
+        const script = document.createElement('script');
+        script.setAttribute('src', 'https://platform.twitter.com/widgets.js');
+        script.setAttribute('charset', 'utf-8');
+        tweetDivided.appendChild(script);
+
 
         // <h4>ヘッダーの中身を書き換える
         removeAllChildren(headerDivided);
@@ -60,19 +65,50 @@
         header4.innerText = '診断結果をclickすると戻ります';
         headerDivided.appendChild(header4);
 
-        // header要素を動かす＆止める f関数
+
+        // header要素を動かす transform f関数
+        var rotateH = document.getElementById('rotateH');
+        var cf = 0;
+        function rotateHeader() {
+            cf = cf + 36;
+            rotateH.style.transform = 'rotateX(' + cf + 'deg)';
+        }
+        var slide = document.getElementById('slide');
+        var yr = 0;
+        function slideHeader() {
+            yr = yr + 5;
+            slide.style.transform = `translateY(${yr}px)`;
+            slide.style.backgroundColor = `#eaf598`;
+        }
+
+        // ヘッダーが1秒で５周して正面で停止
         var rotateX = setInterval(rotateHeader, 20);
         setTimeout(() => {
             clearInterval(rotateX);
         }, 1000);
+
+        // h4ヘッダーが動いて診断ボタンを隠す
         var moveY = setInterval(slideHeader, 20);
         function moveYStop() {
             clearInterval(moveY);
-        }  // h4ヘッダーが動いて診断ボタンを隠す
+        }
         setTimeout(moveYStop, 790);
+
+
         // ボタンを一度だけ押せる呪文
         assessmentButton.disabled = true;
     };
+
+
+    // Enterキーを押すと、ボタンの処理を呼び出す
+    userNameInput.onkeydown = (event) => {
+        if (event.key === 'Enter') {
+            // ボタンのonclick()処理を呼び出す
+            assessmentButton.onclick();
+        }
+    };
+
+
     const answer = [
         '{userName}のいいところは声です。{userName}の特徴的な声は皆を惹きつけ、心に残ります。',
         '{userName}のいいところはまなざしです。{userName}に見つめられた人は、気になって仕方がないでしょう。',
@@ -92,7 +128,9 @@
         '{userName}のいいところは自制心です。やばいと思ったときにしっかりと衝動を抑えられる{userName}が皆から評価されています。',
         '{userName}のいいところは優しさです。あなたの優しい雰囲気や立ち振る舞いに多くの人が癒やされています。'
     ];
-    /**　JSドックコメントdocument  パラメーター引数の説明   returnはどんな結果を返すか？
+
+
+    /**　JS;document  パラメーター引数の説明   returnはどんな結果を返すか？
      * 名前の文字列を渡すと、診断結果を返す f関数
      * @param {string} userName ユーザーの名前
      * @return {string} 診断結果
@@ -107,6 +145,8 @@
         result = result.replace(/\{userName\}/g, userName)
         return result
     }
+
+
     // TESTcode
     console.assert(
         assessment('太郎') === '太郎のいいところは決断力です。@次郎がする決断にいつも助けられる人がいます。',
@@ -118,21 +158,3 @@
     );
     console.log(assessment('太郎'));
 })();
-/**
- * html要素を動かす f関数
- * @param rotateHeader id= rotateH 
- * @param slideHeader id= slide
- */
-var rotateH = document.getElementById('rotateH');
-var cf = 0;
-function rotateHeader() {
-    cf = cf + 36;
-    rotateH.style.transform = 'rotateX(' + cf + 'deg)';
-}
-var slide = document.getElementById('slide');
-var yr = 0;
-function slideHeader() {
-    yr = yr + 5;
-    slide.style.transform = `translateY(${yr}px)`;
-    slide.style.backgroundColor = `#eaf598`;
-}
