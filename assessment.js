@@ -16,19 +16,21 @@
         }
     }
 
-
     // 診断ボタンonclickで動く f関数
     assessmentButton.onclick = () => {
         const userName = userNameInput.value;
+
         if (userName.length === 0) {  // 名前が空のときは 処理を終了する
+            removeAllChildren(resultDivided);
+            const headerNameNull = document.createElement('h3');
+            headerNameNull.innerText = '!! 名前を入力してください !!';
+            resultDivided.appendChild(headerNameNull);
             return;
         }
-
 
         // firstChildのelementを削除
         removeAllChildren(resultDivided);
         removeAllChildren(tweetDivided);
-
 
         // 診断エリアの作成   ==> header,result のdiv要素
         const header = document.createElement('h3');
@@ -38,7 +40,6 @@
         const result = assessment(userName);
         paragraph.innerText = result;
         resultDivided.appendChild(paragraph);
-
 
         //  ツイートエリアの作成　id="tweet-area"
         const anchor = document.createElement('a');
@@ -51,20 +52,17 @@
         anchor.innerText = 'Tweet #あなたのいいところ';
         tweetDivided.appendChild(anchor);
 
-
         // htmlファイルの<script>タグも、こちらに移植[リバースエンジニアリング？]
         const script = document.createElement('script');
         script.setAttribute('src', 'https://platform.twitter.com/widgets.js');
         script.setAttribute('charset', 'utf-8');
         tweetDivided.appendChild(script);
 
-
         // <h4>ヘッダーの中身を書き換える
         removeAllChildren(headerDivided);
         const header4 = document.createElement('h3');
         header4.innerText = '診断結果をclickすると戻ります';
         headerDivided.appendChild(header4);
-
 
         // header要素を動かす transform f関数
         var rotateH = document.getElementById('rotateH');
@@ -81,7 +79,7 @@
             slide.style.backgroundColor = `#eaf598`;
         }
 
-        // ヘッダーが1秒で５周して正面で停止
+        // ヘッダーが1秒で５周して正面で停止･･･【動作不安定】
         var rotateX = setInterval(rotateHeader, 20);
         setTimeout(() => {
             clearInterval(rotateX);
@@ -93,7 +91,6 @@
             clearInterval(moveY);
         }
         setTimeout(moveYStop, 790);
-
 
         // ボタンを一度だけ押せる呪文
         assessmentButton.disabled = true;
@@ -107,7 +104,6 @@
             assessmentButton.onclick();
         }
     };
-
 
     const answer = [
         '{userName}のいいところは声です。{userName}の特徴的な声は皆を惹きつけ、心に残ります。',
@@ -130,7 +126,6 @@
         '{userName}のいいところは行動力です。周りの人を引っ張っていける力があり、{userName}の問題に対して臆することなく取り組む姿に勇気づけられます。'
     ];
 
-
     /**　JS;document  パラメーター引数の説明   returnはどんな結果を返すか？
      * 名前の文字列を渡すと、診断結果を返す f関数
      * @param {string} userName ユーザーの名前
@@ -147,8 +142,7 @@
         return result
     }
 
-
-    // TESTcode
+    // TEST Code
     console.assert(
         assessment('Aloy') === 'Aloyのいいところは思いやりです。Aloyに気をかけてもらった多くの人が感謝しています。',
         '「診断結果の文言の特定の部分を名前に置き換える」処理が正しくありません。'
