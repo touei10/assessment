@@ -150,12 +150,12 @@
 
     // TESTcode
     console.assert(
-        assessment('太郎') === '太郎のいいところは決断力です。@次郎がする決断にいつも助けられる人がいます。',
+        assessment('Aloy') === 'Aloyのいいところは思いやりです。Aloyに気をかけてもらった多くの人が感謝しています。',
         '「診断結果の文言の特定の部分を名前に置き換える」処理が正しくありません。'
     );
     console.assert(
-        assessment('Aloy') === assessment('Alloy'),
+        assessment('Rost') === assessment('Rost'),
         '「入力が同じ名前なら→同じ診断結果を出力する」処理が正しくありません。'
     );
-    console.log(assessment('太郎'));
+    console.log(assessment('Aloy'));
 })();
