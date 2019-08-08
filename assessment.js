@@ -94,6 +94,8 @@
 
         // ボタンを一度だけ押せる呪文
         assessmentButton.disabled = true;
+        // input も一回だけ
+        userNameInput.disabled = true;
     };
 
 
